@@ -48,6 +48,8 @@ foreach my $uuid (keys %vms) {
 system("clear");
 
 my $i;
+print "0. exit\n";
+$what{0} = '';
 foreach (keys %vms) {
   if ($vms{$_}{VMState} =~ /saved|poweroff/) {
     my $type = $vms{$_}{GuestOSType} =~ /windows/i ? 'gui' : 'headless';
