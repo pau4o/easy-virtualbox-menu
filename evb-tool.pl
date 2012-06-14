@@ -50,15 +50,17 @@ system("clear");
 my $i;
 print "0. exit\n";
 $what{0} = '';
-foreach (keys %vms) {
-  if ($vms{$_}{VMState} =~ /saved|poweroff/) {
-    my $type = $vms{$_}{GuestOSType} =~ /windows/i ? 'gui' : 'headless';
-    print ++$i, '. Start', "\t",  $vms{$_}{name}, "\n";
-    $what{$i} = qq($ebox{manager} startvm $_ --type $type);
+foreach my $uuid (keys %vms) {
+  if ($vms{$uuid}{VMState} =~ /(saved|poweroff)/) {
+    my $action = 'Run';
+    $action = 'Resume' if $1 eq 'saved';
+    my $type = $vms{$uuid}{GuestOSType} =~ /windows/i ? 'gui' : 'headless';
+    print ++$i, '. ', $action, "\t",  $vms{$uuid}{name}, "\n";
+    $what{$i} = qq($ebox{manager} startvm $uuid --type $type);
   }
-  elsif ($vms{$_}{VMState} =~ /running/) {
-    print ++$i, '. Save ', "\t", $vms{$_}{name}, "\n";
-    $what{$i} = qq($ebox{manager} controlvm $_ savestate);
+  elsif ($vms{$uuid}{VMState} =~ /running/) {
+    print ++$i, '. Save ', "\t", $vms{$uuid}{name}, "\n";
+    $what{$i} = qq($ebox{manager} controlvm $uuid savestate);
   }
 }
 ### %what
