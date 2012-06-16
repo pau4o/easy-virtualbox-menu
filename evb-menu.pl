@@ -57,8 +57,9 @@ foreach my $index ( 0 .. $#vms) {
   foreach (keys %vbox) {
     next unless m/State/;
     my $action = 'Run   ';
-    my $type = 'gui';
+    my $type = '';
     if ( $vbox{State} =~ /(saved|off)/) {
+      $type = 'gui';
       $action = 'Wake  ' if $1 eq 'saved';
       unless ($vbox{'Guest OS'} =~ /windows/i ) {
         my $type = 'headless';
@@ -70,6 +71,10 @@ foreach my $index ( 0 .. $#vms) {
     } elsif ($vbox{State} =~ /running/) {
       $action = 'Save  ';
       $what{$index} = qq($ebox{manager} controlvm $vbox{UUID} savestate);
+      show_in_menu($index, $action, $vbox{Name}, $type);
+      $action = 'Stop';
+      $index .= 's';
+      $what{$index} = qq($ebox{manager} controlvm $vbox{UUID} acpipowerbutton);
     }
     elsif ($vbox{State} =~ /paused/) {
       $action = 'Resume';
