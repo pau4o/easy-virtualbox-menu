@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-#use Smart::Comments;
+# use Smart::Comments;
 
 my %vbox = (
   manager  => 'VBoxManage',
@@ -45,15 +45,26 @@ close $machines or die "$!\n";
 # Show menu with commands
 system("clear");
 
+sub show_in_menu {
+  my ($index, $action, $name, $type) = @_;
+  print qq($index. $action\t $name [$type]\n);
+}
+
 print "q. Exit\n";
 foreach my $index ( 0 .. $#vms) {
   my %vbox = %{$vms[$index]};
   foreach (keys %vbox) {
     next unless m/State/;
     my $action = 'Run   ';
+    my $type = 'gui';
     if ( $vbox{State} =~ /(saved|off)/) {
       $action = 'Wake  ' if $1 eq 'saved';
-      my $type = $vbox{'Guest OS'} =~ /windows/i ? 'gui' : 'headless';
+      unless ($vbox{'Guest OS'} =~ /windows/i ) {
+        my $type = 'headless';
+        $what{$index} = qq($ebox{manager} startvm $vbox{UUID} --type $type);
+        show_in_menu($index, $action, $vbox{Name}, $type);
+      }
+      $index .= 'g' unless $vbox{'Guest OS'} =~ /windows/i;
       $what{$index} = qq($ebox{manager} startvm $vbox{UUID} --type $type);
     } elsif ($vbox{State} =~ /running/) {
       $action = 'Save  ';
@@ -67,7 +78,7 @@ foreach my $index ( 0 .. $#vms) {
       $index = '#';
       $action = $vbox{State};
     }
-    print qq($index. $action\t$vbox{Name}\n);
+    show_in_menu($index, $action, $vbox{Name}, $type);
   }
 }
 ### %what
