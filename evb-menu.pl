@@ -42,15 +42,16 @@ open(my $machines, '-|', "$ebox{manager} list -l vms")
 }
 close $machines or die "$!\n";
 ### @vms
-# Show menu with commands
+
 system("clear");
 
 sub show_in_menu {
   my ($index, $action, $name, $type) = @_;
-  print qq($index. $action\t $name [$type]\n);
+  $type = $type ? "[$type]" : '';
+  printf qq(%3s. %s\t %s %s\n), $index, $action, $name, $type;
 }
 
-print "q. Exit\n";
+show_in_menu('q', 'Exit', '');
 foreach my $index ( 0 .. $#vms) {
   my %vbox = %{$vms[$index]};
   foreach (keys %vbox) {
