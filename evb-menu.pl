@@ -51,7 +51,7 @@ foreach my $index ( 0 .. $#vms) {
   foreach (keys %vbox) {
     next unless m/State/;
     my $action = 'Run   ';
-    if ( $vbox{State} =~ /(saved|poweroff)/) {
+    if ( $vbox{State} =~ /(saved|off)/) {
       $action = 'Wake  ' if $1 eq 'saved';
       my $type = $vbox{'Guest OS'} =~ /windows/i ? 'gui' : 'headless';
       $what{$index} = qq($ebox{manager} startvm $vbox{UUID} --type $type);
